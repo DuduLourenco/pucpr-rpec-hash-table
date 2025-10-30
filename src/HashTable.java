@@ -44,11 +44,6 @@ public abstract class HashTable<Z> {
         final int idx = indexFor(key, capacity);
         EArrayList<Z> bucket = table[idx];
 
-        boolean con = bucket.contains(key);
-        if(!con) {
-            System.out.println("não contem");
-        }
-
         return bucket != null && bucket.contains(key);
     }
 
@@ -58,7 +53,7 @@ public abstract class HashTable<Z> {
             int bucketSize = (table[i] == null) ? 0 : table[i].size();
             if (bucketSize == 0) empty++;
             if (bucketSize > max) { max = bucketSize; maxIdx = i; }
-            //System.out.printf("bucket[%02d]: %d%n", i, bucketSize);
+            System.out.printf("bucket[%02d]: %d%n", i, bucketSize);
         }
         System.out.printf("Total itens: %d | Buckets: %d | Load factor: %.3f%n",
                 size, capacity, loadFactor());
@@ -81,27 +76,27 @@ public abstract class HashTable<Z> {
     }
 
     private int indexFor(Z key, int cap) {
-        return Math.floorMod(hashFunction(key), cap);
+        int h = hashFunction(key);
+        return (cap & (cap - 1)) == 0 ? (h & (cap - 1)) : Math.floorMod(h, cap);
     }
 
     @SuppressWarnings("unchecked")
-    private void grow(int newCapacity) {
-        newCapacity = nextPowerOfTwo(newCapacity);
+    private void grow(int requestedCapacity) {
+        int newCapacity = nextPowerOfTwo(requestedCapacity);
+        // opcional: clamp para evitar tamanhos absurdos
+        final int MAX_CAP = 1 << 30; // ~1 bi, depende da sua política
+        if (newCapacity > MAX_CAP) newCapacity = MAX_CAP;
 
         EArrayList<Z>[] oldTable = this.table;
         EArrayList<Z>[] newTable = (EArrayList<Z>[]) new EArrayList<?>[newCapacity];
+
         for (int i = 0; i < oldTable.length; i++) {
             EArrayList<Z> bucket = oldTable[i];
             if (bucket == null || bucket.size() == 0) continue;
 
             for (int j = 0; j < bucket.size(); j++) {
                 Z item = bucket.get(j);
-
-                if(item.equals("Abbey")) {
-                    System.out.println("abbey");
-                }
-
-                int idx = Math.floorMod(hashFunction(item), newCapacity);
+                int idx = indexFor(item, newCapacity); // usa o helper!
                 EArrayList<Z> b = newTable[idx];
                 if (b == null) {
                     b = new EArrayList<>();
