@@ -31,7 +31,9 @@ public class Main {
         int foundHits = 0;
         final long hitStart = System.nanoTime();
         for (String line : lines) {
-            if (hashTable.search(line)) foundHits++;
+            if (hashTable.search(line)) {
+                foundHits++;
+            }
         }
         final long hitEnd = System.nanoTime();
 
