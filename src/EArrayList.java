@@ -17,6 +17,10 @@ public class EArrayList<T> {
         this.data = (T[]) new Object[this.capacity];
     }
 
+    public int size() {
+        return this.size;
+    }
+
     private void isIndexInBounds(int index) {
         boolean isIndexOutBounds = index < 0 || index >= size;
         if(isIndexOutBounds) {

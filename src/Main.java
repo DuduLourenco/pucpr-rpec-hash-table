@@ -15,18 +15,39 @@ public class Main {
     }
 
     private static void measure(HashTable<String> hashTable, String[] lines) {
-        final long start = System.nanoTime();
+        int collidedCount = 0;
+        final long insStart = System.nanoTime();
         for (String line : lines) {
-            hashTable.insert(line);
+            int collided = hashTable.insert(line);
+            if (collided == 1) collidedCount++;
         }
-        final long end = System.nanoTime();
+        final long insEnd = System.nanoTime();
 
-        long elapsedNs = end - start;
+        printMetrics("Inserção", insStart, insEnd, lines.length);
+        System.out.printf("Qtd. de colisões: %d (%.2f%%)\n",
+                collidedCount,
+                100.0 * collidedCount / Math.max(lines.length, 1));
+
+        int foundHits = 0;
+        final long hitStart = System.nanoTime();
+        for (String line : lines) {
+            if (hashTable.search(line)) foundHits++;
+        }
+        final long hitEnd = System.nanoTime();
+
+        printMetrics("Busca", hitStart, hitEnd, lines.length);
+        System.out.printf("Encontrados: %d de %d\n", foundHits, lines.length);
+    }
+
+    private static void printMetrics(String label, long startNs, long endNs, int nOps) {
+        long elapsedNs = endNs - startNs;
         double ms = elapsedNs / 1_000_000.0;
         double sec = elapsedNs / 1_000_000_000.0;
-        double rps = (lines.length / Math.max(sec, 1e-9));
+        double opsPerSec = nOps / Math.max(sec, 1e-9);
 
-        System.out.printf("Taxa de inserção: %.2f registros por segundo\n", rps);
-        System.out.printf("Tempo total para inserção: %.3f ms\n", ms);
+        System.out.printf(
+                "%s -> %.3f ms | %.2f ops/s\n",
+                label, ms, opsPerSec
+        );
     }
 }
