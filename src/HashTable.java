@@ -55,7 +55,6 @@ public abstract class HashTable<Z> {
         }
 
         double loadFactor = total / (double) capacity;
-        System.out.println("----");
         System.out.printf("Total itens: %d | Buckets: %d | Load factor (média/bucket): %.3f\n",
                 total, capacity, loadFactor);
         System.out.printf("Buckets vazios: %d (%.1f%%)\n",
