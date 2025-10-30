@@ -37,6 +37,8 @@ public class Main {
 
         printMetrics("Busca", hitStart, hitEnd, lines.length);
         System.out.printf("Encontrados: %d de %d\n", foundHits, lines.length);
+
+        hashTable.printBucketSizes();
     }
 
     private static void printMetrics(String label, long startNs, long endNs, int nOps) {

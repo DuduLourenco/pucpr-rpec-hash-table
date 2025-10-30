@@ -1,9 +1,10 @@
 public abstract class HashTable<Z> {
-    private final EArrayList[] keys;
+    private final EArrayList<Z>[] keys;
     private final int capacity = 32;
 
+    @SuppressWarnings("unchecked")
     public HashTable() {
-        this.keys = new EArrayList[this.capacity];
+        this.keys = (EArrayList<Z>[]) new EArrayList<?>[capacity];
     }
 
     protected int capacity() {
@@ -42,22 +43,31 @@ public abstract class HashTable<Z> {
         return bucket.contains(key);
     }
 
-    public void showKeys() {
+    public void printBucketSizes() {
+        int total = 0, empty = 0, max = 0, maxIdx = -1;
+
         for (int i = 0; i < capacity; i++) {
-            System.out.printf("-- %d%n", i);
-            EArrayList<Z> bucket = keys[i];
-
-            if (bucket == null || bucket.size() == 0) {
-                System.out.println("(vazio)");
-                System.out.println("------");
-                continue;
-            }
-
-            for (int j = 0; j < bucket.size(); j++) {
-                Z item = bucket.get(j);
-                System.out.printf("item: %s%n", String.valueOf(item));
-            }
-            System.out.println("------");
+            int bucketSize = (keys[i] == null) ? 0 : keys[i].size();
+            total += bucketSize;
+            if (bucketSize == 0) empty++;
+            if (bucketSize > max) { max = bucketSize; maxIdx = i; }
+            System.out.printf("bucket[%02d]: %d%n", i, bucketSize);
         }
+
+        double loadFactor = total / (double) capacity;
+        System.out.println("----");
+        System.out.printf("Total itens: %d | Buckets: %d | Load factor (média/bucket): %.3f\n",
+                total, capacity, loadFactor);
+        System.out.printf("Buckets vazios: %d (%.1f%%)\n",
+                empty, 100.0 * empty / capacity);
+        System.out.printf("Maior bucket: %d (tam=%d)\n", maxIdx, max);
+    }
+
+    public int[] bucketSizes() {
+        int[] sizes = new int[capacity];
+        for (int i = 0; i < capacity; i++) {
+            sizes[i] = (keys[i] == null) ? 0 : keys[i].size();
+        }
+        return sizes;
     }
 }
