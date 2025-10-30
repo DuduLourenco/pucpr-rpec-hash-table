@@ -53,7 +53,7 @@ public abstract class HashTable<Z> {
             int bucketSize = (table[i] == null) ? 0 : table[i].size();
             if (bucketSize == 0) empty++;
             if (bucketSize > max) { max = bucketSize; maxIdx = i; }
-            System.out.printf("bucket[%02d]: %d%n", i, bucketSize);
+            //System.out.printf("bucket[%02d]: %d%n", i, bucketSize);
         }
         System.out.printf("Total itens: %d | Buckets: %d | Load factor: %.3f%n",
                 size, capacity, loadFactor());
