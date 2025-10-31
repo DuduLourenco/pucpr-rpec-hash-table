@@ -3,7 +3,7 @@ public abstract class HashTable<Z> {
     private int capacity = 32;
     private int size = 0;
 
-    private static final double MAX_LOAD = 5; // fator de carga
+    private static final double MAX_LOAD = 0.75; // fator de carga
 
     @SuppressWarnings("unchecked")
     public HashTable() {
@@ -62,31 +62,17 @@ public abstract class HashTable<Z> {
         System.out.printf("Maior bucket: %d (tam=%d)%n", maxIdx, max);
     }
 
-    public int[] bucketSizes() {
-        int[] sizes = new int[capacity];
-        for (int i = 0; i < capacity; i++) {
-            sizes[i] = (table[i] == null) ? 0 : table[i].size();
-        }
-        return sizes;
-    }
-
-
     private double loadFactor() {
         return size / (double) capacity;
     }
 
     private int indexFor(Z key, int cap) {
         int h = hashFunction(key);
-        return (cap & (cap - 1)) == 0 ? (h & (cap - 1)) : Math.floorMod(h, cap);
+        return Math.floorMod(h, cap);
     }
 
     @SuppressWarnings("unchecked")
-    private void grow(int requestedCapacity) {
-        int newCapacity = nextPowerOfTwo(requestedCapacity);
-        // opcional: clamp para evitar tamanhos absurdos
-        final int MAX_CAP = 1 << 30; // ~1 bi, depende da sua política
-        if (newCapacity > MAX_CAP) newCapacity = MAX_CAP;
-
+    private void grow(int newCapacity) {
         EArrayList<Z>[] oldTable = this.table;
         EArrayList<Z>[] newTable = (EArrayList<Z>[]) new EArrayList<?>[newCapacity];
 
@@ -96,7 +82,7 @@ public abstract class HashTable<Z> {
 
             for (int j = 0; j < bucket.size(); j++) {
                 Z item = bucket.get(j);
-                int idx = indexFor(item, newCapacity); // usa o helper!
+                int idx = indexFor(item, newCapacity);
                 EArrayList<Z> b = newTable[idx];
                 if (b == null) {
                     b = new EArrayList<>();
@@ -107,17 +93,5 @@ public abstract class HashTable<Z> {
         }
         this.table = newTable;
         this.capacity = newCapacity;
-    }
-
-    private static int nextPowerOfTwo(int n) {
-        if (n <= 1) return 1;
-        n--;
-        n |= n >> 1;
-        n |= n >> 2;
-        n |= n >> 4;
-        n |= n >> 8;
-        n |= n >> 16;
-        n++;
-        return n;
     }
 }
