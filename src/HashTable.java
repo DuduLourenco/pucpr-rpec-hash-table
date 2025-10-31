@@ -7,7 +7,7 @@ public abstract class HashTable<Z> {
 
     @SuppressWarnings("unchecked")
     public HashTable() {
-        this.table = (EArrayList<Z>[]) new EArrayList<?>[capacity];
+        this.table = (EArrayList<Z>[]) new EArrayList[capacity];
     }
 
     protected int capacity() { return capacity; }
@@ -74,7 +74,7 @@ public abstract class HashTable<Z> {
     @SuppressWarnings("unchecked")
     private void grow(int newCapacity) {
         EArrayList<Z>[] oldTable = this.table;
-        EArrayList<Z>[] newTable = (EArrayList<Z>[]) new EArrayList<?>[newCapacity];
+        EArrayList<Z>[] newTable = (EArrayList<Z>[]) new EArrayList[newCapacity];
 
         for (int i = 0; i < oldTable.length; i++) {
             EArrayList<Z> bucket = oldTable[i];

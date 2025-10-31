@@ -134,7 +134,6 @@ public class EArrayList<T> {
 
     @SuppressWarnings("unchecked")
     public <A> A[] toArray(A[] a) {
-        // se 'a' for pequeno, crie um novo array do MESMO tipo de 'a'
         if (a.length < size) {
             Class<?> component = a.getClass().getComponentType();
             A[] out = (A[]) Array.newInstance(component, size);
@@ -143,7 +142,6 @@ public class EArrayList<T> {
             }
             return out;
         } else {
-            // cabe em 'a': copie e, se sobrar espaço, coloque null sentinela
             for (int i = 0; i < size; i++) {
                 a[i] = (A) this.data[i];
             }
